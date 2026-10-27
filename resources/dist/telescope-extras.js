@@ -3,9 +3,7 @@
 
     var FILTER_CLASS = 'telescope-extras-query-filter';
 
-    /**
-     * Match the needles in order, "%" works like SQL LIKE's wildcard.
-     */
+    // Needles must appear in order, like SQL LIKE with "%".
     function isMatch(source, needles) {
         var currentIndex = 0;
 
@@ -22,10 +20,6 @@
         return true;
     }
 
-    /**
-     * The related entries card renders one table per tab; the queries one
-     * links each row to the query preview screen.
-     */
     function findQueriesTable(card) {
         var link = card.querySelector('table tbody a[href*="/queries/"]');
 
@@ -36,16 +30,13 @@
         var needles = value.toLowerCase().split('%');
 
         table.querySelectorAll('tbody > tr').forEach(function (row) {
-            var cell = row.querySelector('td[title]');
-            var sql = (cell ? cell.getAttribute('title') : row.textContent).toLowerCase();
+            var sql = row.querySelector('td[title]').getAttribute('title').toLowerCase();
 
             setDisplay(row, value === '' || isMatch(sql, needles));
         });
     }
 
-    /**
-     * Only write on change, so our own writes don't keep the observer busy.
-     */
+    // Write only on change, otherwise our own writes re-trigger the observer.
     function setDisplay(element, visible) {
         var display = visible ? '' : 'none';
 
@@ -84,23 +75,19 @@
                 nav.appendChild(filter);
             }
 
-            // Vue reuses this card when navigating to another entry, so start over there.
             var input = filter.querySelector('input');
 
+            // Vue reuses the card and its rows across entries: reset per entry, re-filter per render.
             if (filter.dataset.path !== location.pathname) {
                 filter.dataset.path = location.pathname;
                 input.value = '';
             }
 
-            // Vue toggles tabs with v-show, so follow the queries table's visibility.
             setDisplay(filter, table.style.display !== 'none');
-
-            // Vue reuses rows when entries change, so re-apply on every render.
             applyFilter(table, input.value);
         });
     }
 
-    // Records are already batched per microtask, and sync() is idempotent.
     new MutationObserver(sync).observe(document.body, {
         childList: true,
         subtree: true,

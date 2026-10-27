@@ -1,9 +1,9 @@
 # Telescope Extras
 
-Small add-ons for [Laravel Telescope](https://github.com/laravel/telescope) 5.x, installed next to it — no fork, nothing in `vendor/laravel/telescope` is changed.
+Small add-ons for [Laravel Telescope](https://github.com/laravel/telescope) 5.x. The package is installed alongside Telescope and does not modify it.
 
-- **Query filter** — a search box on the *Queries* tab of a request/command/job's related entries. `%` works as a wildcard (`select%orders`). Proposed upstream in [laravel/telescope#1668](https://github.com/laravel/telescope/pull/1668).
-- **Named binding fix** — `:content1` no longer gets replaced inside `:content10`, which produced SQL like `'a'0` in the recorded query. Proposed upstream in [laravel/telescope#1765](https://github.com/laravel/telescope/pull/1765).
+- **Query filter:** adds a search box to the *Queries* tab of a request, command or job. Use `%` as a wildcard, for example `select%orders`. Originally proposed in [laravel/telescope#1668](https://github.com/laravel/telescope/pull/1668).
+- **Named binding fix:** with bindings like `:content1` and `:content10`, Telescope replaced `:content1` inside `:content10` and recorded broken SQL such as `'a'0`. Originally proposed in [laravel/telescope#1765](https://github.com/laravel/telescope/pull/1765).
 
 ## Installation
 
@@ -13,7 +13,7 @@ composer require haminh7036/telescope-extras --dev
 
 The query filter is enabled automatically.
 
-To use the binding fix, swap the query watcher in `config/telescope.php`:
+To use the binding fix, replace the query watcher in `config/telescope.php`:
 
 ```php
 'watchers' => [
@@ -29,13 +29,13 @@ To use the binding fix, swap the query watcher in `config/telescope.php`:
 
 ## How it works
 
-Telescope inlines its compiled dashboard JS, so the filter is added from the outside: a middleware appended to the `telescope` middleware group injects a small script and stylesheet into the dashboard page (route `telescope` only — API responses and mail previews are left alone). The script watches the DOM and adds the box when the related Queries table is rendered.
+Telescope ships its dashboard as a compiled bundle, so the filter cannot be added to its Vue components directly. Instead, a middleware in the `telescope` middleware group appends a small script and stylesheet to the dashboard page. Other Telescope responses, such as API calls and mail previews, are not changed. The script adds the search box once the Queries table is rendered.
 
-Because it relies on Telescope's markup (`.card > ul.nav-pills`, query rows linking to `/queries/{id}`), check the Queries tab after upgrading Telescope.
+The script depends on Telescope's markup (`.card > ul.nav-pills`, and query rows linking to `/queries/{id}`). After upgrading Telescope, check that the box still appears on the Queries tab.
 
 ## Uninstall
 
-Restore `Watchers\QueryWatcher::class` in `config/telescope.php`, then `composer remove haminh7036/telescope-extras`.
+Change the watcher in `config/telescope.php` back to `Watchers\QueryWatcher::class`, then run `composer remove haminh7036/telescope-extras`.
 
 ## Testing
 
