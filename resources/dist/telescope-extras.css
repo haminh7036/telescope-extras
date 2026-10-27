@@ -1,5 +1,7 @@
 .telescope-extras-query-filter {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .telescope-extras-query-filter .icon {

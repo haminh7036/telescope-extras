@@ -54,7 +54,8 @@
 
     function createFilter() {
         var wrapper = document.createElement('li');
-        wrapper.className = FILTER_CLASS + ' ml-auto mr-3 d-flex align-items-center';
+        // No "d-flex": its display !important would beat the inline display:none.
+        wrapper.className = FILTER_CLASS + ' ml-auto mr-3';
         wrapper.innerHTML =
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="icon text-muted" fill="currentColor">' +
             '<path fill-rule="evenodd" clip-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"/>' +
@@ -83,11 +84,19 @@
                 nav.appendChild(filter);
             }
 
+            // Vue reuses this card when navigating to another entry, so start over there.
+            var input = filter.querySelector('input');
+
+            if (filter.dataset.path !== location.pathname) {
+                filter.dataset.path = location.pathname;
+                input.value = '';
+            }
+
             // Vue toggles tabs with v-show, so follow the queries table's visibility.
             setDisplay(filter, table.style.display !== 'none');
 
             // Vue reuses rows when entries change, so re-apply on every render.
-            applyFilter(table, filter.querySelector('input').value);
+            applyFilter(table, input.value);
         });
     }
 
