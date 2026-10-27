@@ -1,0 +1,41 @@
+{
+    "name": "haminh7036/telescope-extras",
+    "description": "Small add-ons for Laravel Telescope: SQL filter on the related Queries tab and a fix for named bindings sharing a prefix.",
+    "keywords": ["laravel", "telescope", "debugging", "queries"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Minh Ha",
+            "email": "minhha7036@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "laravel/telescope": "^5.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.38|^9.15|^10.8|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Haminh7036\\TelescopeExtras\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Haminh7036\\TelescopeExtras\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Haminh7036\\TelescopeExtras\\TelescopeExtrasServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

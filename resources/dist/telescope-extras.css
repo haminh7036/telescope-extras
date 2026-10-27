@@ -1,0 +1,17 @@
+.telescope-extras-query-filter {
+    position: relative;
+}
+
+.telescope-extras-query-filter .icon {
+    position: absolute;
+    left: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+}
+
+.telescope-extras-query-filter .form-control {
+    padding-left: 2.25rem;
+    font-size: 0.875rem;
+    border-radius: 9999px;
+}
