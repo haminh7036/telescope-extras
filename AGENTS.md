@@ -6,6 +6,7 @@
 
 # Issue Management
 - Language: English only.
+- Tone: Strictly neutral and constructive. Never use blaming, negative, or frustrated language regarding upstream maintainers or closed PRs; treat upstream decisions as legitimate maintainability trade-offs and focus entirely on the technical use case.
 - Check existing issues before opening a new one to prevent duplicates.
 - Structure: Context, Steps to Reproduce (or Proposed Behavior), Expected Result, Actual Result, Environment.
 - Include minimal reproducible code or tests for bug reports.
