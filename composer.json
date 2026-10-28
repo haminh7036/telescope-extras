@@ -1,7 +1,7 @@
 {
     "name": "haminh7036/telescope-extras",
-    "description": "Small add-ons for Laravel Telescope: SQL query filter, named binding fix, and XML client request support.",
-    "keywords": ["laravel", "telescope", "debugging", "queries", "xml", "http-client"],
+    "description": "Small add-ons for Laravel Telescope",
+    "keywords": ["laravel", "telescope", "laravel-telescope", "debugging", "monitoring"],
     "license": "MIT",
     "authors": [
         {
