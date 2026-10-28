@@ -4,6 +4,7 @@ Small add-ons for [Laravel Telescope](https://github.com/laravel/telescope) 5.x.
 
 - **Query filter:** adds a search box to the *Queries* tab of a request, command or job. Use `%` as a wildcard, for example `select%orders`. Originally proposed in [laravel/telescope#1668](https://github.com/laravel/telescope/pull/1668).
 - **Named binding fix:** with bindings like `:content1` and `:content10`, Telescope replaced `:content1` inside `:content10` and recorded broken SQL such as `'a'0`. Originally proposed in [laravel/telescope#1765](https://github.com/laravel/telescope/pull/1765).
+- **XML HTTP client support:** parses XML request payloads and responses into arrays so they can be inspected, masked (`hideParameters`), and displayed as structured data in the dashboard instead of empty payloads or `HTML Response`. Originally proposed in [laravel/telescope#1758](https://github.com/laravel/telescope/pull/1758).
 
 ## Installation
 
@@ -13,7 +14,7 @@ composer require haminh7036/telescope-extras --dev
 
 The query filter is enabled automatically.
 
-To use the binding fix, replace the query watcher in `config/telescope.php`:
+To use the binding fix or XML HTTP client support, replace the corresponding watchers in `config/telescope.php`:
 
 ```php
 'watchers' => [
@@ -23,6 +24,11 @@ To use the binding fix, replace the query watcher in `config/telescope.php`:
         'ignore_packages' => true,
         'ignore_paths' => [],
         'slow' => 100,
+    ],
+
+    // Watchers\ClientRequestWatcher::class => [
+    \Haminh7036\TelescopeExtras\Watchers\ClientRequestWatcher::class => [
+        'enabled' => env('TELESCOPE_CLIENT_REQUEST_WATCHER', true),
     ],
 ],
 ```
@@ -35,7 +41,7 @@ The script depends on Telescope's markup (`.card > ul.nav-pills`, and query rows
 
 ## Uninstall
 
-Change the watcher in `config/telescope.php` back to `Watchers\QueryWatcher::class`, then run `composer remove haminh7036/telescope-extras`.
+Change any custom watchers in `config/telescope.php` back to Telescope's defaults (e.g. `Watchers\QueryWatcher::class`, `Watchers\ClientRequestWatcher::class`), then run `composer remove haminh7036/telescope-extras`.
 
 ## Testing
 
