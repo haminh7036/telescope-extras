@@ -22,3 +22,7 @@
   - Attribution: If a feature is based on an external contributor's PR/idea, credit them (e.g., `Originally proposed by @author in [repo#123](url)`); omit attribution if it is the maintainer's own PR.
   - Code blocks must specify language syntax (`php`, `bash`). For config changes, show commented-out defaults alongside replacements.
   - Keep sections mechanism-first (`How it works`) and include rollback steps (`Uninstall`) when modifying configurations.
+
+# Architecture & Contributing
+- Strictly follow all architectural patterns, testing requirements, and contribution rules in [CONTRIBUTING.md](CONTRIBUTING.md).
+
