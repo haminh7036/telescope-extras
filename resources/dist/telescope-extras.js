@@ -2,6 +2,7 @@
     'use strict';
 
     var FILTER_CLASS = 'telescope-extras-query-filter';
+    var DUPLICATE_CLASS = 'telescope-extras-duplicate-query';
 
     // Needles must appear in order, like SQL LIKE with "%".
     function isMatch(source, needles) {
@@ -33,6 +34,43 @@
             var sql = row.querySelector('td[title]').getAttribute('title').toLowerCase();
 
             setDisplay(row, value === '' || isMatch(sql, needles));
+        });
+    }
+
+    function highlightDuplicates(card, table) {
+        var vm = card.__vue__;
+        var duplicateIds = {};
+        var seen = {};
+
+        if (vm && Array.isArray(vm.queries)) {
+            vm.queries.forEach(function (q) {
+                var key = q.content ? (q.content.hash || q.content.sql) + '-' + (q.content.connection || '') : null;
+                if (key) {
+                    if (seen[key]) duplicateIds[q.id] = true;
+                    else seen[key] = true;
+                }
+            });
+        }
+
+        table.querySelectorAll('tbody > tr').forEach(function (row) {
+            var isDup = false;
+
+            if (vm && Array.isArray(vm.queries)) {
+                var link = row.querySelector('a[href*="/queries/"]');
+                var id = link ? link.getAttribute('href').split('/').pop() : null;
+                isDup = !!(id && duplicateIds[id]);
+            } else {
+                var td = row.querySelector('td[title]');
+                var sql = td ? td.getAttribute('title') : null;
+                if (sql) {
+                    if (seen[sql]) isDup = true;
+                    else seen[sql] = true;
+                }
+            }
+
+            if (row.classList.contains(DUPLICATE_CLASS) !== isDup) {
+                row.classList.toggle(DUPLICATE_CLASS, isDup);
+            }
         });
     }
 
@@ -85,6 +123,10 @@
 
             setDisplay(filter, table.style.display !== 'none');
             applyFilter(table, input.value);
+
+            if (table.style.display !== 'none') {
+                highlightDuplicates(nav.parentElement, table);
+            }
         });
     }
 

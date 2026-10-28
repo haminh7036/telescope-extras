@@ -16,6 +16,7 @@ class InjectAssetsTest extends TestCase
         $content = $this->get('/telescope/requests')->assertOk()->getContent();
 
         $this->assertStringContainsString('telescope-extras-query-filter', $content);
+        $this->assertStringContainsString('telescope-extras-duplicate-query', $content);
         $this->assertLessThan(strripos($content, '</body>'), strpos($content, 'telescope-extras-query-filter'));
     }
 

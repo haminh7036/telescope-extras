@@ -17,3 +17,7 @@
     font-size: 0.875rem;
     border-radius: 9999px;
 }
+
+.telescope-extras-duplicate-query {
+    background-color: rgba(111, 98, 0, 0.2);
+}

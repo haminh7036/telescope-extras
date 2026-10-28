@@ -3,6 +3,7 @@
 Small add-ons for [Laravel Telescope](https://github.com/laravel/telescope) 5.x. The package is installed alongside Telescope and does not modify it.
 
 - **Query filter:** adds a search box to the *Queries* tab of a request, command or job. Use `%` as a wildcard, for example `select%orders`. Originally proposed in [laravel/telescope#1668](https://github.com/laravel/telescope/pull/1668).
+- **Duplicate query highlighting:** highlights repeated SQL queries in the *Queries* tab with a warning background to surface duplicate executions. Originally proposed by @sumankathet51 in [laravel/telescope#1361](https://github.com/laravel/telescope/pull/1361).
 - **Named binding fix:** with bindings like `:content1` and `:content10`, Telescope replaced `:content1` inside `:content10` and recorded broken SQL such as `'a'0`. Originally proposed in [laravel/telescope#1765](https://github.com/laravel/telescope/pull/1765).
 - **XML HTTP client support:** parses XML request payloads and responses into arrays so they can be inspected, masked (`hideParameters`), and displayed as structured data in the dashboard instead of empty payloads or `HTML Response`. Originally proposed in [laravel/telescope#1758](https://github.com/laravel/telescope/pull/1758).
 
@@ -12,7 +13,7 @@ Small add-ons for [Laravel Telescope](https://github.com/laravel/telescope) 5.x.
 composer require haminh7036/telescope-extras --dev
 ```
 
-The query filter is enabled automatically.
+The query filter and duplicate query highlighting are enabled automatically.
 
 To use the binding fix or XML HTTP client support, replace the corresponding watchers in `config/telescope.php`:
 
@@ -35,7 +36,7 @@ To use the binding fix or XML HTTP client support, replace the corresponding wat
 
 ## How it works
 
-Telescope ships its dashboard as a compiled bundle, so the filter cannot be added to its Vue components directly. Instead, a middleware in the `telescope` middleware group appends a small script and stylesheet to the dashboard page. Other Telescope responses, such as API calls and mail previews, are not changed. The script adds the search box once the Queries table is rendered.
+Telescope ships its dashboard as a compiled bundle, so the filter cannot be added to its Vue components directly. Instead, a middleware in the `telescope` middleware group appends a small script and stylesheet to the dashboard page. Other Telescope responses, such as API calls and mail previews, are not changed. The script adds the search box and highlights duplicate queries once the Queries table is rendered.
 
 The script depends on Telescope's markup (`.card > ul.nav-pills`, and query rows linking to `/queries/{id}`). After upgrading Telescope, check that the box still appears on the Queries tab.
 
