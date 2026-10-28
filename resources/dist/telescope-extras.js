@@ -3,6 +3,7 @@
 
     var FILTER_CLASS = 'telescope-extras-query-filter';
     var DUPLICATE_CLASS = 'telescope-extras-duplicate-query';
+    var CURL_CLASS = 'telescope-extras-copy-curl';
 
     // Needles must appear in order, like SQL LIKE with "%".
     function isMatch(source, needles) {
@@ -95,6 +96,113 @@
         return wrapper;
     }
 
+    function buildCurl(entry) {
+        if (!entry || !entry.content) return '';
+
+        var content = entry.content;
+        var method = (content.method || 'GET').toUpperCase();
+        var headers = content.headers || {};
+        var proto = headers['x-forwarded-proto'] || (location.protocol ? location.protocol.replace(':', '') : 'http');
+        var host = headers['host'] || location.host || 'localhost';
+        var uri = content.uri || '/';
+        var url = uri.startsWith('http://') || uri.startsWith('https://')
+            ? uri
+            : proto + '://' + host + (uri.startsWith('/') ? '' : '/') + uri;
+
+        var parts = ['curl -X ' + method];
+
+        var skipped = ['host', 'content-length', 'connection', 'cache-control'];
+        for (var key in headers) {
+            if (!Object.prototype.hasOwnProperty.call(headers, key)) continue;
+            if (skipped.indexOf(key.toLowerCase()) !== -1) continue;
+            var val = headers[key];
+            if (Array.isArray(val)) val = val.join(', ');
+            parts.push("-H '" + key + ": " + ('' + val).replace(/'/g, "'\\''") + "'");
+        }
+
+        if (content.payload && method !== 'GET' && method !== 'HEAD') {
+            var body = typeof content.payload === 'object'
+                ? JSON.stringify(content.payload)
+                : '' + content.payload;
+            if (body && body !== '{}' && body !== '[]') {
+                parts.push("--data '" + body.replace(/'/g, "'\\''") + "'");
+            }
+        }
+
+        parts.push("'" + url.replace(/'/g, "'\\''") + "'");
+
+        return parts.join(' \\\n  ');
+    }
+
+    function copyText(text, btn) {
+        function done() {
+            var prev = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.disabled = true;
+            setTimeout(function () {
+                btn.textContent = prev;
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () {
+                fallbackCopy(text, done);
+            });
+        } else {
+            fallbackCopy(text, done);
+        }
+    }
+
+    function fallbackCopy(text, cb) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+            document.execCommand('copy');
+            cb();
+        } catch (e) {
+            // ignore
+        }
+        ta.remove();
+    }
+
+    function syncCopyCurl() {
+        document.querySelectorAll('.card-header').forEach(function (header) {
+            var h2 = header.querySelector('h2');
+            if (!h2 || h2.textContent.trim() !== 'Request Details') return;
+
+            var card = header.parentElement;
+            var vm = card ? card.__vue__ : null;
+            var entry = vm ? vm.entry : null;
+
+            var existing = header.querySelector('.' + CURL_CLASS);
+
+            if (!entry) {
+                if (existing) existing.remove();
+                return;
+            }
+
+            if (!existing) {
+                existing = document.createElement('button');
+                existing.type = 'button';
+                existing.className = CURL_CLASS + ' btn btn-outline-secondary btn-sm ml-auto';
+                existing.textContent = 'Copy as cURL';
+                header.appendChild(existing);
+            }
+
+            if (existing.dataset.entryId !== String(entry.id)) {
+                existing.dataset.entryId = String(entry.id);
+                existing.onclick = function () {
+                    copyText(buildCurl(entry), existing);
+                };
+            }
+        });
+    }
+
     function sync() {
         document.querySelectorAll('.card > ul.nav-pills').forEach(function (nav) {
             var table = findQueriesTable(nav.parentElement);
@@ -128,6 +236,8 @@
                 highlightDuplicates(nav.parentElement, table);
             }
         });
+
+        syncCopyCurl();
     }
 
     new MutationObserver(sync).observe(document.body, {

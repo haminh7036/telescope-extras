@@ -21,3 +21,15 @@
 .telescope-extras-duplicate-query {
     background-color: rgba(111, 98, 0, 0.2);
 }
+
+.telescope-extras-copy-curl {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: inherit;
+    border-color: rgba(108, 117, 125, 0.35);
+}
+
+.telescope-extras-copy-curl:hover {
+    color: inherit;
+    background-color: rgba(108, 117, 125, 0.15);
+}
