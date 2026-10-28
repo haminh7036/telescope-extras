@@ -23,6 +23,12 @@
   - Code blocks must specify language syntax (`php`, `bash`). For config changes, show commented-out defaults alongside replacements.
   - Keep sections mechanism-first (`How it works`) and include rollback steps (`Uninstall`) when modifying configurations.
 
+# Verification & Testing Before Commit
+- Never commit code before running and passing all applicable tests.
+- Backend changes: Run the full test suite (`vendor/bin/phpunit`) and ensure zero failures.
+- Frontend and asset changes (JS, CSS): Verify visual output and DOM behavior using a real or headless browser (e.g., Chrome `--headless`, Playwright) and capture screenshots as visual proof before committing.
+- Always present verification evidence (test passes, screenshots) to the user for approval before creating Git commits.
+
 # Architecture & Contributing
 - Strictly follow all architectural patterns, testing requirements, and contribution rules in [CONTRIBUTING.md](CONTRIBUTING.md).
 
